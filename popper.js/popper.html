@@ -4,25 +4,84 @@
     <title>Popper Tutorial</title>
     <style>
         #tooltip {
-          background: #333;
+          background: #047ef9;
           color: white;
           font-weight: bold;
-          padding: 4px 8px;
+          padding: 3px 8px;
           font-size: 13px;
-          border-radius: 4px;
+          border-radius: 10px;
         }
-      </style>
+        #arrow,
+        #arrow::before {
+          position: absolute;
+          width: 8px;
+          height: 8px;
+          background: inherit;
+        }
+        #arrow {
+          visibility: hidden;
+        }
+        #arrow::before {
+          visibility: visible;
+          content: '';
+          transform: rotate(45deg);
+        }
+        #tooltip[data-popper-placement^='top'] > #arrow {
+          bottom: -4px;
+        }
+        #tooltip[data-popper-placement^='bottom'] > #arrow {
+          top: -4px;
+        }
+        #tooltip[data-popper-placement^='left'] > #arrow {
+          right: -4px;
+        }
+        #tooltip[data-popper-placement^='right'] > #arrow {
+          left: -4px;
+        }
+        #tooltip {
+          /* ... */
+          display: none;
+        }
+        #tooltip[data-show] {
+          display: block;
+        }
+      </style>  
   </head>
   <body>
     <button id="button" aria-describedby="tooltip">My button</button>
     <div id="tooltip" role="tooltip">My tooltip</div>
 
     <script src="https://unpkg.com/@popperjs/core@2"></script>
-    <script>
-      const button = document.querySelector('#button');
-      const tooltip = document.querySelector('#tooltip');
+              <script>
+                const button = document.querySelector('#button');
+                const tooltip = document.querySelector('#tooltip');
 
-      const popperInstance = Popper.createPopper(button, tooltip);
-    </script>
+                const popperInstance = Popper.createPopper(button, tooltip, {
+                  modifiers: [
+                    {
+                      name: 'offset',
+                      options: {
+                        offset: [90, -21],
+                      },
+                    },
+                  ],
+                });                
+                
+                function show() {
+                  tooltip.setAttribute('data-show', '');
+                  popperInstance.update();
+                }
+                function hide() {
+                  tooltip.removeAttribute('data-show');
+                }
+                const showEvents = ['mouseenter', 'focus'];
+                const hideEvents = ['mouseleave', 'blur'];
+                showEvents.forEach((event) => {
+                  button.addEventListener(event, show);
+                });
+                hideEvents.forEach((event) => {
+                  button.addEventListener(event, hide);
+                });
+              </script>
   </body>
 </html>
